@@ -1,0 +1,121 @@
+name: Build YAAP for OnePlus 12R (aston)
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_branch:
+        description: 'YAAP manifest branch (Android version)'
+        required: true
+        type: choice
+        options:
+          - seventeen
+          - sixteen
+        default: seventeen
+
+concurrency:
+  group: yaap-aston-build
+  cancel-in-progress: false
+
+env:
+  MANIFEST_BRANCH: ${{ inputs.manifest_branch || 'seventeen' }}
+  DEVICE_CODENAME: aston
+  LUNCH_TARGET: yaap_aston-userdebug
+  CCACHE_SIZE: 30G
+
+jobs:
+  build:
+    # Larger runner required: standard runners have 14GB disk / 7GB RAM, not enough for AOSP.
+    runs-on: ubuntu-24.04-8core
+    timeout-minutes: 480
+    steps:
+      - name: Checkout build config
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+            git git-lfs curl wget \
+            unzip zip xz-utils zstd lz4 \
+            cpio rsync patchelf \
+            openjdk-17-jdk python3 python3-pip \
+            build-essential ccache ninja-build \
+            flex bison gperf bc \
+            libssl-dev libxml2-utils libelf-dev libncurses-dev \
+            squashfs-tools
+
+      - name: Add swap (OOM safety)
+        run: |
+          sudo fallocate -l 16G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+
+      - name: Install repo tool
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -sS https://storage.googleapis.com/git-repo-downloads/repo -o "$HOME/bin/repo"
+          chmod a+x "$HOME/bin/repo"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - name: Configure git / git-lfs
+        run: |
+          git config --global user.name "YAAP CI"
+          git config --global user.email "ci@localhost"
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git lfs install
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: repo init (YAAP manifest)
+        run: |
+          mkdir -p "$HOME/yaap"
+          cd "$HOME/yaap"
+          repo init \
+            -u https://github.com/YAAP/manifest.git \
+            -b "$MANIFEST_BRANCH" \
+            --depth=1 \
+            --no-superproject \
+            --groups=all,-notdefault
+
+      - name: Inject local manifest (device/kernel/vendor)
+        run: |
+          cd "$HOME/yaap"
+          mkdir -p .repo/local_manifests
+          cp "$GITHUB_WORKSPACE/roomservice.xml" .repo/local_manifests/roomservice.xml
+
+      - name: repo sync
+        run: |
+          cd "$HOME/yaap"
+          repo sync -c -j8 --force-sync --no-clone-bundle --fail-fast
+
+      - name: Apply YAAP product config (replace LineageOS product)
+        run: |
+          cd "$HOME/yaap"
+          cp "$GITHUB_WORKSPACE/patches/yaap_aston.mk" device/oneplus/aston/yaap_aston.mk
+          echo 'PRODUCT_MAKEFILES += $(LOCAL_DIR)/yaap_aston.mk' >> device/oneplus/aston/AndroidProducts.mk
+
+      - name: Build (lunch + mka bacon)
+        run: |
+          cd "$HOME/yaap"
+          export USE_CCACHE=1
+          export CCACHE_EXEC=/usr/bin/ccache
+          export BUILD_USERNAME=buildbot
+          export BUILD_HOSTNAME=github-actions
+          export LC_ALL=C
+          export TZ=UTC
+          ccache -M "$CCACHE_SIZE"
+          source build/envsetup.sh
+          lunch "$LUNCH_TARGET"
+          mka bacon -j8
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: yaap-${{ env.DEVICE_CODENAME }}-run-${{ github.run_number }}
+          path: |
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/*.zip
+          if-no-files-found: error
+          retention-days: 7
