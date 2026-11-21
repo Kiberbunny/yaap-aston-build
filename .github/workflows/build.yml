@@ -119,3 +119,17 @@ jobs:
             ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/*.zip
           if-no-files-found: error
           retention-days: 7
+
+      - name: Upload recovery and partition images
+        uses: actions/upload-artifact@v4
+        with:
+          name: yaap-${{ env.DEVICE_CODENAME }}-images-${{ github.run_number }}
+          path: |
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/recovery.img
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/boot.img
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/init_boot.img
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/dtbo.img
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/vbmeta.img
+            ${{ runner.home }}/yaap/out/target/product/${{ env.DEVICE_CODENAME }}/vendor_boot.img
+          if-no-files-found: warn
+          retention-days: 7
