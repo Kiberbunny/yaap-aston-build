@@ -2,22 +2,15 @@ name: Build YAAP for OnePlus 12R (aston)
 
 on:
   workflow_dispatch:
-    inputs:
-      manifest_branch:
-        description: 'YAAP manifest branch (Android version)'
-        required: true
-        type: choice
-        options:
-          - seventeen
-          - sixteen
-        default: seventeen
 
 concurrency:
   group: yaap-aston-build
   cancel-in-progress: false
 
 env:
-  MANIFEST_BRANCH: ${{ inputs.manifest_branch || 'seventeen' }}
+  # Fixed to Android 17: roomservice.xml pins crDroid 17.0 trees,
+  # which match the `seventeen` manifest branch only.
+  MANIFEST_BRANCH: seventeen
   DEVICE_CODENAME: aston
   LUNCH_TARGET: yaap_aston-userdebug
   CCACHE_SIZE: 30G
@@ -44,6 +37,7 @@ jobs:
             build-essential ccache ninja-build \
             flex bison gperf bc \
             libssl-dev libxml2-utils libelf-dev libncurses-dev \
+            python3-mako \
             squashfs-tools
 
       - name: Add swap (OOM safety)
