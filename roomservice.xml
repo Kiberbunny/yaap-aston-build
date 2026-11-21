@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Local manifest for YAAP (Android 17 / "seventeen") on OnePlus 12R (aston).
+
+  Device tree / kernel / HALs are taken from crDroid 17.0 and LineageOS 24
+  (both Android 17), because YAAP does not have official aston trees.
+  Vendor proprietary blobs come from TheMuppets (lineage-24.0).
+-->
+<manifest>
+
+  <remote name="crdroid" fetch="https://github.com/crdroidandroid/" />
+  <remote name="themuppets" fetch="https://github.com/TheMuppets/" />
+  <remote name="lineage" fetch="https://github.com/LineageOS/" />
+  <remote name="halogenos" fetch="https://github.com/halogenOS/" />
+  <remote name="crdroid-gitlab" fetch="https://gitlab.com/crdroidandroid/" />
+
+  <!-- ===== Device trees ===== -->
+  <project path="device/oneplus/aston"
+           name="android_device_oneplus_aston"
+           remote="crdroid" revision="17.0" />
+  <project path="device/oneplus/sm8550-common"
+           name="android_device_oneplus_sm8550-common"
+           remote="crdroid" revision="17.0" />
+
+  <!-- ===== Kernel (sm8550 / kalama) ===== -->
+  <project path="kernel/oneplus/sm8550"
+           name="android_kernel_oneplus_sm8550"
+           remote="crdroid" revision="17.0" />
+  <project path="kernel/oneplus/sm8550-devicetrees"
+           name="android_kernel_oneplus_sm8550-devicetrees"
+           remote="crdroid" revision="17.0" />
+  <project path="kernel/oneplus/sm8550-modules"
+           name="android_kernel_oneplus_sm8550-modules"
+           remote="crdroid" revision="17.0" />
+
+  <!-- ===== Qualcomm HALs (AOSP CAF layout) ===== -->
+  <project path="hardware/qcom-caf/common"
+           name="android_hardware_qcom-caf_common"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="hardware/qcom-caf/sm8550/audio/primary-hal"
+           name="android_hardware_qcom-caf_sm8550_audio_primary-hal"
+           remote="halogenos" revision="XOS-17.0" />
+  <project path="hardware/qcom-caf/sm8550/audio/pal"
+           name="android_hardware_qcom-caf_sm8550_audio_pal"
+           remote="halogenos" revision="XOS-17.0" />
+  <project path="hardware/qcom-caf/sm8550/audio/agm"
+           name="android_hardware_qcom-caf_sm8550_audio_agm"
+           remote="halogenos" revision="XOS-17.0" />
+  <project path="hardware/qcom-caf/sm8550/audio/graphservices"
+           name="android_hardware_qcom-caf_sm8550_audio_graphservices"
+           remote="halogenos" revision="XOS-17.0" />
+  <project path="hardware/qcom-caf/sm8550/display"
+           name="android_hardware_qcom-caf_sm8550_display"
+           remote="halogenos" revision="XOS-17.0" />
+  <project path="hardware/qcom-caf/sm8550/media"
+           name="android_hardware_qcom-caf_sm8550_media"
+           remote="halogenos" revision="XOS-15.2" />
+
+  <project path="hardware/oplus"
+           name="android_hardware_oplus"
+           remote="crdroid" revision="17.0" />
+  <project path="hardware/pixelworks/interfaces"
+           name="android_hardware_pixelworks_interfaces"
+           remote="lineage" revision="lineage-24.0" />
+
+  <!-- ===== Vendor proprietary blobs ===== -->
+  <project path="vendor/oneplus/aston"
+           name="proprietary_vendor_oneplus_aston"
+           remote="themuppets" revision="lineage-24.0" />
+  <project path="vendor/oneplus/sm8550-common"
+           name="proprietary_vendor_oneplus_sm8550-common"
+           remote="themuppets" revision="lineage-24.0" />
+  <project path="vendor/oneplus/ir"
+           name="proprietary_vendor_oneplus_ir"
+           remote="crdroid-gitlab" revision="17.0" />
+  <project path="vendor/oneplus/dolby"
+           name="proprietary_vendor_oneplus_dolby"
+           remote="crdroid-gitlab" revision="17.0" />
+
+  <!-- ===== Qualcomm open-source vendor modules ===== -->
+  <project path="vendor/qcom/opensource/display"
+           name="android_vendor_qcom_opensource_display"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/display-core"
+           name="android_vendor_qcom_opensource_display-core"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/display-commonsys"
+           name="android_vendor_qcom_opensource_display-commonsys"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/display-commonsys-intf"
+           name="android_vendor_qcom_opensource_display-commonsys-intf"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/audio-commonsys-intf"
+           name="android_vendor_qcom_opensource_audio-commonsys-intf"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/interfaces"
+           name="android_vendor_qcom_opensource_interfaces"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/arpal-lx"
+           name="android_vendor_qcom_opensource_arpal-lx"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/audioreach-graphservices"
+           name="android_vendor_qcom_opensource_audioreach-graphservices"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/usb"
+           name="android_vendor_qcom_opensource_usb"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/vibrator"
+           name="android_vendor_qcom_opensource_vibrator"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/power"
+           name="android_vendor_qcom_opensource_power"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/data-ipa-cfg-mgr"
+           name="android_vendor_qcom_opensource_data-ipa-cfg-mgr"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/fm-commonsys"
+           name="android_vendor_qcom_opensource_fm-commonsys"
+           remote="lineage" revision="lineage-24.0" />
+  <project path="vendor/qcom/opensource/libfmjni"
+           name="android_vendor_qcom_opensource_libfmjni"
+           remote="lineage" revision="lineage-24.0" />
+
+  <!-- ===== crDroid-only packages referenced by device config ===== -->
+  <project path="packages/apps/LunarisDolby"
+           name="android_packages_apps_LunarisDolby"
+           remote="crdroid" revision="17.0" />
+
+</manifest>
