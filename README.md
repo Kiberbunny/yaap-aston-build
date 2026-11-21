@@ -32,9 +32,12 @@ YAAP не имеет официальной поддержки OnePlus 12R, по
    *Settings → Actions → General → Larger runners → Allow larger runners*
    (раннер `ubuntu-24.04-8core` оплачивается с коэффициентом ×8 минут).
 2. Откройте вкладку **Actions → Build YAAP for OnePlus 12R (aston)**.
-3. Нажмите **Run workflow** (ветка манифеста: `seventeen` = Android 17,
-   `sixteen` = Android 16).
-4. После завершения скачайте артефакт — flashable zip из ветки **Artifacts**.
+3. Нажмите **Run workflow** (собирается всегда ветка `seventeen` = Android 17;
+   другие ветки не используются, т.к. деревья в `roomservice.xml` — 17.0).
+4. После завершения скачайте артефакты из ветки **Artifacts**:
+   - `yaap-aston-run-*` — flashable zip;
+   - `yaap-aston-images-*` — `recovery.img`, `boot.img`, `init_boot.img`,
+     `dtbo.img`, `vbmeta.img`, `vendor_boot.img` (для первичной установки).
 
 Первый запуск: `repo sync` (~1–2 ч) + сборка (~2–3 ч).
 
